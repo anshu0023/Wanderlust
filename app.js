@@ -38,6 +38,9 @@ app.use(express.static(path.join(__dirname, "/public/js")));
 
 
 const dburl = process.env.ATLASDB_URL
+console.log("hii");
+console.log("DB URL:", dburl);
+
 
 main()
   .then(() => console.log("Successfully connected to database"))
@@ -47,6 +50,7 @@ async function main() {
   await mongoose.connect(dburl);
 }
 
+
 const store = MongoStore.create({
   mongoUrl : dburl,
   crypto :{
@@ -55,9 +59,10 @@ const store = MongoStore.create({
   touchAfter : 24*3600, 
 });
 
-store.on("error", () =>{
-  console.log("ERROR in MONGO SESSION STORE" ,err);
+store.on("error", (err) => {
+  console.log("ERROR in MONGO SESSION STORE", err);
 });
+
 
 const webSession = session({
   store,
@@ -97,9 +102,17 @@ app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", userRouter);
 
 //MIDDLEWARES
+// Handle 404 errors
 app.all("*", (req, res, next) => {
-  throw new ExpressError(404, "Page not found");
+  next(new ExpressError(404, "Page not found"));
 });
+
+// General error handler
+app.use((err, req, res, next) => {
+  const { status = 500, message = "Unexpected error occurred" } = err;
+  res.status(status).render("listings/error.ejs", { err });
+});
+
 
 app.use((err, req, res, next) => {
   let { status = 400, message = "unexpected error occured" } = err;
