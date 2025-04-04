@@ -104,22 +104,15 @@ app.use("/", userRouter);
 //MIDDLEWARES
 // Handle 404 errors
 app.all("*", (req, res, next) => {
-  next(new ExpressError(404, "Page not found"));
+  throw new ExpressError(404, "Page not found");
 });
-
-// General error handler
-app.use((err, req, res, next) => {
-  const { status = 500, message = "Unexpected error occurred" } = err;
-  res.status(status).render("listings/error.ejs", { err });
-});
-
 
 app.use((err, req, res, next) => {
   let { status = 400, message = "unexpected error occured" } = err;
   res.status(status).render("./listings/error.ejs", { err });
-  next(err);
+  // next(err);
 });
 
 app.listen(port, () => {
-  console.log(`app is listening to port ${port}`);
+  console.log(`app is listening to port ${port}`);
 });
