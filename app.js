@@ -10,7 +10,7 @@ const methodOverride = require("method-override");
 const path = require("path");
 const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
-const MongoStore = require('connect-mongo');
+const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -35,28 +35,21 @@ app.use(express.static(path.join(__dirname, "/public/css")));
 app.use(express.static(path.join(__dirname, "/public/js")));
 
 // connecting with mongodb
-
-
-const dburl = process.env.ATLASDB_URL
-
+let atlasDb_URL = process.env.ATLASDB_URL;
 main()
   .then(() => console.log("Successfully connected to database"))
   .catch((err) => console.log(err));
 
 async function main() {
-  await mongoose.connect(dburl);
+  await mongoose.connect(atlasDb_URL);
 }
 
 const store = MongoStore.create({
-  mongoUrl : dburl,
-  crypto :{
-    secret :process.env.SECRET,
+  mongoUrl: atlasDb_URL,
+  crypto: {
+    secret: process.env.SECRET,
   },
-  touchAfter : 24*3600, 
-});
-
-store.on("error", () =>{
-  console.log("ERROR in MONGO SESSION STORE" ,err);
+  touchAfter: 24 * 3600, // 24hrs
 });
 
 const webSession = session({
@@ -65,12 +58,10 @@ const webSession = session({
   resave: false,
   saveUninitialized: true,
   cookie: {
-    maxAge: 1 * 60 * 60 * 1000, //1hr
+    maxAge: 7 * 60 * 60 * 1000, // 7 days
     httpOnly: true,
   },
 });
-
-
 
 app.use(webSession);
 
@@ -104,7 +95,7 @@ app.all("*", (req, res, next) => {
 app.use((err, req, res, next) => {
   let { status = 400, message = "unexpected error occured" } = err;
   res.status(status).render("./listings/error.ejs", { err });
-  next(err);
+  // next(err);
 });
 
 app.listen(port, () => {
