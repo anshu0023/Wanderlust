@@ -23,9 +23,22 @@ body {
 
 .category {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  padding: 1vw;
+  align-items: center;
+  padding: 1rem;
+  gap: 1rem; /* Add spacing between items */
+  width: 100%;
 }
+
+@media (max-width: 768px) {
+  .category {
+    justify-content: center; /* Center items on smaller screens */
+    gap: 1.5rem; /* Increase spacing for better breathing room */
+  }
+}
+
+
 .icon {
   display: flex;
   flex-direction: column;
