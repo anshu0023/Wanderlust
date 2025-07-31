@@ -19,7 +19,7 @@ const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 
-const port = 8080;
+const port = 4000;
 //SETTING EJS
 
 app.set("view engine", "ejs");
